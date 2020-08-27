@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <script src="web3.js"></script>
+        <script>
+            var Web3 = require('web3');
+            var web3 = new Web3();
+            //connect to the node
+            web3.setProvider(new
+            web3.providers.HttpProvider('http://localhost:8545'));
+            var accounts
+
+
+            function getMainAcc() {
+                web3.eth.getCoinbase((error, acc) => {
+                    if (error) {
+                        document.getElementById('coinbaseAddress').innerHTML =  error;
+                    }
+                    else {
+                        accounts = acc;
+                        document.getElementById('coinbaseAddress').innerHTML =  'Address: ' + acc;
+                        
+                        web3.eth.getBalance(acc,(error, balance) => {
+                            if (error) {
+                        document.getElementById('accountBalance').innerHTML =  error;}
+                            else {
+                                document.getElementById('accountBalance').innerHTML = 'balance: ' + web3.fromWei(balance,"ether") + ' ether';
+                            }
+                        })
+                    }
+                })
+            }
+            function sendTransaction(reciever, amount, password){
+                web3.personal.sendTransaction({from: accounts, to: reciever, value: web3.toWei(amount, "ether")},password, (error,transaction) => {
+                    if (error) {
+                        document.getElementById('transHash').innerHTML =  error;
+                    }
+                    else {
+                        document.getElementById('transHash').innerHTML =  'Hash: ' + transaction;
+                    
+                    }
+                })
+            }
+   
+        
+        </script>
+    </head>
+    <body onload ="getMainAcc()">
+       
+        <h1>Node1</h1>
+        <h1>Money Transfer</h1>
+        <hr>
+        <h2>Main Account Info</h2>
+        <div id="coinbaseAddress"></div>
+        <div id="accountBalance"></div>
+        <hr>
+        <label>Transfer to: </label>
+        <input type="text" id="reciever"/>
+        <label>Amount (ether): </label>
+        <input type="text" id="amount"/>
+        <label>Pass phrase: </label>
+        <input type="text" id="password"/>
+        <br>
+        <button type="button" onclick="sendTransaction(document.getElementById('reciever').value,document.getElementById('amount').value,document.getElementById('password').value)">Send</button>
+        <br>
+        <div id="transHash"></div>
+    </body>
+
+</html>
